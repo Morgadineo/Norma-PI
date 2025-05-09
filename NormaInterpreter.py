@@ -17,7 +17,6 @@ class NormaCode:
 
         self.execute_line(first_line)
 
-
     def execute_line(self, label: str):
         """
         Método para executar a instrução armazenada na linha rotulada por
@@ -28,7 +27,7 @@ class NormaCode:
         command, register, goto_1, goto_2 = self.labels[label]
         
         if command == "zero":
-            if self.execute_command(command, register):
+            if self.execute_command(command, register) == 1:
                 self.goto(goto_1)
             else:
                 self.goto(goto_2)
@@ -46,6 +45,7 @@ class NormaCode:
         if label in self.labels.keys():
             self.execute_line(label)
         else:
+            print("FIM DO PROGRAMA")
             return
 
     def execute_command(self, command: str, reg: str):
@@ -84,11 +84,13 @@ class NormaCode:
         sttmt   : str = splitted_line[1]
         command : str = splitted_line[2]
         register: str = splitted_line[3]
-        goto_1  : str = splitted_line[6][:-1]
+        goto_1  : str = splitted_line[6]
         goto_2  : str | None = None
 
         if sttmt == "if":
             goto_2 = splitted_line[9][:-1]
+        else:
+            goto_1 : str = splitted_line[6][:-1]
 
         return tag, command, register, goto_1, goto_2
 
@@ -156,9 +158,9 @@ class NormaCode:
         self.create_reg(register)
 
         if self.registers[register] == 0:
-            return True
+            return 1
 
-        return False
+        return 0
 
 if __name__ == "__main__":
     norma = NormaCode("./codigo_1.txt")
