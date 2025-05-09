@@ -1,0 +1,6 @@
+1: do add X then goto 2
+2: do add X then goto 3
+3: do add X then goto 4
+
+4: if zero X then goto 0 else goto 5
+5: do dec X then goto 4
