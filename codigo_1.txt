@@ -14,3 +14,4 @@
 11: if zero Y then goto 0 else goto 12
 12: do dec Y then goto 13
 13: do add A then goto 11
+

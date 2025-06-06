@@ -1,3 +1,6 @@
+from os import ST_NOATIME
+
+
 class NormaCode:
 
     def __init__(self, filename: str) -> None:
@@ -15,7 +18,10 @@ class NormaCode:
 
         first_line = str(next(iter(self.labels.keys())))
 
-        self.execute_line(first_line)
+        running = self.execute_line(first_line)
+
+        while running != None:
+            running = self.execute_line(running)
 
     def execute_line(self, label: str):
         """
@@ -25,16 +31,11 @@ class NormaCode:
         :param label: Rótulo da linha a ser executada.
         """
         command, register, goto_1, goto_2 = self.labels[label]
-        
-        if command == "zero":
-            if self.execute_command(command, register) == 1:
-                self.goto(goto_1)
-            else:
-                self.goto(goto_2)
 
+        if self.execute_command(label, command, register) in (1, None):
+            return self.goto(goto_1)
         else:
-            self.execute_command(command, register)
-            self.goto(goto_1)
+            return self.goto(goto_2)
 
     def goto(self, label: str):
         """
@@ -43,12 +44,12 @@ class NormaCode:
         :param label: Label que representa uma linha.
         """
         if label in self.labels.keys():
-            self.execute_line(label)
+            return label
         else:
             print("FIM DO PROGRAMA")
-            return
+            return None
 
-    def execute_command(self, command: str, reg: str):
+    def execute_command(self, label:str, command: str, reg: str):
         """
         Executa o comando passado utilizando o registrador reg.
 
@@ -70,7 +71,24 @@ class NormaCode:
 
             case "zero":
                 return self.if_zero(reg)
-            
+
+        #######################################################################
+        # Exibição dos registradores
+        #
+        # Ignora esse menu bizarro.
+        # Ainda estou desenvolvendo o menu utilizando o Tkinter.
+        #######################################################################
+
+        print(f"{label}:", end="")
+        regs_n = 0
+        for reg in self.registers:
+            print(f"\t{reg}", end="")
+            regs_n += 1
+        print(f"\n", end="")
+
+        for value in self.registers.values():
+            print(f"\t{value}", end="")
+        print(f"\n---------{'--------' * (regs_n - 1)}--")
         return None
 
     def parse_line(self, line: str) -> tuple[str, str, str, str, str | None]:
@@ -79,6 +97,7 @@ class NormaCode:
         
         :param line: A linha a ser analisada.
         """
+        line = line.strip()
         splitted_line: list[str] = line.split(" ")
         tag     : str = splitted_line[0][:-1]
         sttmt   : str = splitted_line[1]
@@ -88,9 +107,9 @@ class NormaCode:
         goto_2  : str | None = None
 
         if sttmt == "if":
-            goto_2 = splitted_line[9][:-1]
+            goto_2 = splitted_line[9]
         else:
-            goto_1 : str = splitted_line[6][:-1]
+            goto_1 : str = splitted_line[6]
 
         return tag, command, register, goto_1, goto_2
 
@@ -112,7 +131,6 @@ class NormaCode:
         self.create_reg(register)
 
         self.registers[register] -= 1
-        print(f"dec {register} -> {self.registers}")
         
     def add(self, register: str):
         """
@@ -123,7 +141,6 @@ class NormaCode:
         self.create_reg(register)
 
         self.registers[register] += 1
-        print(f"add {register} -> {self.registers}")
 
     def create_intruct(self, line: tuple[str, str, str, str, str | None]):
         """
@@ -163,4 +180,4 @@ class NormaCode:
         return 0
 
 if __name__ == "__main__":
-    norma = NormaCode("./codigo_1.txt")
+    norma = NormaCode("./menorQue.txt")

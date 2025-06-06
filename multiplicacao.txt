@@ -1,0 +1,29 @@
+1: do add A then goto 2
+2: do add A then goto 3
+3: do add B then goto 4
+4: do add B then goto 5
+5: do add B then goto 6
+
+6: if zero A then goto 9 else goto 7
+7: do dec A then goto 8
+8: do add C then goto 6
+
+9: if zero B then goto 12 else goto 10
+10: do dec B then goto 11
+11: do add D then goto 9
+
+12: if zero C then goto 21 else goto 13
+13: do dec C then goto 14               
+
+14: if zero D then goto 18 else goto 15
+15: do dec D then goto 16
+16: do add A then goto 17
+17: do add B then goto 14 
+
+18: if zero B then goto 12 else goto 19
+19: do add D then goto 20
+20: do dec B then goto 18
+
+21: if zero D then goto 0 else goto 22
+22: do add B then goto 23
+23: do dec D then goto 21
