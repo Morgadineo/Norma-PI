@@ -79,7 +79,7 @@ class NormaCode:
         # Ainda estou desenvolvendo o menu utilizando o Tkinter.
         #######################################################################
 
-        print(f"{label}:", end="")
+        print(f"{label}:{command}{reg}", end="")
         regs_n = 0
         for reg in self.registers:
             print(f"\t{reg}", end="")
